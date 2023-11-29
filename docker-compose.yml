@@ -27,25 +27,25 @@ services:
       - "1337:1337"
     depends_on:
       - postgres
-    
-
+      
   postgres:
-    image: postgres
-    container_name: postgres  
+    image: postgres:16.1-alpine3.18
+    container_name: truso-drom-postgres
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}truso-drom-db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /var/lib/postgresql/data
-
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d give-me-db" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d truso-drom-db" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     restart: unless-stopped
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - strapi-data:/var/lib/postgresql/data/
+
+volumes:
+  strapi-data:
